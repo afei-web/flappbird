@@ -1,7 +1,10 @@
 import { DataStore } from "./js/base/DataStore";
 import { ResourceLoader } from "./js/base/ResourceLoader";
+import { Sprite } from "./js/base/Sprite";
 import { Director } from "./js/Director";
 import { Birds } from "./js/player/Birds";
+import { Score } from "./js/player/Score";
+import { StartButton } from "./js/player/StarButton";
 import { Background } from "./js/runtime/Background";
 import { Land } from "./js/runtime/Land";
 
@@ -33,6 +36,8 @@ export class Main{// 定义main类
 
    // 初始化游戏数据
    init(){
+      // 游戏开始
+      this.director.isGameOver = false
       // 将游戏数据初始化并保持到变量池里
       // 使用DataStore的put保存,因为这些数据在游戏结束后会被销毁
       this.store
@@ -40,6 +45,8 @@ export class Main{// 定义main类
          .put('land',new Land())
          .put('pipes',[])
          .put('birds',new Birds())
+         .put('startButton',new StartButton())
+         .put('score',new Score())
       // 先调用一次 创建水管的方法
       this.director.createPipes()
       // 调用导演的run方法来运行程序
@@ -52,13 +59,33 @@ export class Main{// 定义main类
       // 手机报错
       // this.canvas.addEventListener('touchstart',()=>{
       // 需要使用微信的API
-      wx.onTouchStart(() => {
-         if(this.director.isGameOver){
+      wx.onTouchStart(e => {
+         let {clientX,clientY} = e.touches[0]
+      if(this.director.isGameOver){
             // 游戏结束 点击重新开始
-         }else{
+            let bg = Sprite.getImage('background')
+            let land = Sprite.getImage('land')
+            let btn = Sprite.getImage('startButton')
+            // 重新定义开始按钮的矩形范围
+            // 矩形起点的x坐标
+            let startX = (this.canvas.width - btn.width)/2
+            // 矩形起点的y坐标
+            let startY = (this.canvas.height - land.height - btn.height)/2
+            // 矩形终点x坐标
+            let endX = startX + btn.width 
+            let endY = startY + btn.height 
+            if(
+               clientX > startX &&
+               clientX < endX   &&
+               clientY > startY && 
+               clientY < endY
+            ){
+               this.init()
+            }
+      }else{
             // 游戏进行中 点击小鸟向上飞
             this.director.birdsUp()
-         }
+      }
       })
    }
 }
