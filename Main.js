@@ -2,11 +2,13 @@ import { DataStore } from "./js/base/DataStore";
 import { ResourceLoader } from "./js/base/ResourceLoader";
 import { Sprite } from "./js/base/Sprite";
 import { Director } from "./js/Director";
+import { playbgm } from "./js/music";
 import { Birds } from "./js/player/Birds";
 import { Score } from "./js/player/Score";
 import { StartButton } from "./js/player/StarButton";
 import { Background } from "./js/runtime/Background";
 import { Land } from "./js/runtime/Land";
+import wxapi from './js/wxAPI';
 
 // 游戏开始的入口,初始化游戏的整个元素
 export class Main{// 定义main类
@@ -30,6 +32,10 @@ export class Main{// 定义main类
       this.store.res = map 
       this.store.canvas = this.canvas
       this.store.ctx = this.ctx
+      // playbgm()
+      // wxapi.getUserInfo()
+      // wxapi.createUserInfoButton()
+      wxapi.getTelInfo()
       // 调用初始化游戏的方法
       this.init()
    }
@@ -81,6 +87,8 @@ export class Main{// 定义main类
                clientY < endY
             ){
                this.init()
+            }else{
+               // wxapi.showKeyboard()
             }
       }else{
             // 游戏进行中 点击小鸟向上飞
